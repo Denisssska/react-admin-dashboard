@@ -2,10 +2,20 @@ import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Footer, Menu, Navbar } from './components';
 import { Home, Login, Products, Users } from './pages';
 import './styles/global.scss';
+
+const scroll = {
+	'::-webkit-scrollbar': { width: '4px', borderRadius: '10px', backgroundColor: '#f9f9fd' },
+	'::-webkit-scrollbar-thumb': { borderRadius: '10px', backgroundColor: 'gray' },
+	'::-webkit-scrollbar-track': {
+		boxShadow: 'inset 0 0 6px rgba(0,0,0,0.2)',
+		borderRadius: '10px',
+		backgroundColor: '#f9f9fd',
+	},overflow:"scroll",overflowX:'hidden'
+} as React.CSSProperties
 const App = () => {
 	const Layout = () => {
 		return (
-			<div className='main'>
+			<div  className='main'>
 				<Navbar />
 				<div className='container'>
 					<div className='menuContainer'>
