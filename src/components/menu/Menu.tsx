@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { menu } from '../../data';
 import './menu.scss';
 export const Menu = () => {
+
+	
 	return (
 		<div className='menu'>
 			{menu.map(item => (
@@ -9,7 +11,7 @@ export const Menu = () => {
 					<span className='title'>{item.title}</span>
 					{item.listItems.map(listItem => (
 						<Link key={listItem.id} to={listItem.url} className='listItem'>
-							<img src='home.svg' alt='home' />
+							<img src={`/${listItem.icon}`} alt={listItem.title} />
 							<span className='listItemTitle'>{listItem.title}</span>
 						</Link>
 					))}

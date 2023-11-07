@@ -1,16 +1,17 @@
-import { useState } from 'react';
 import './Products.scss';
 
-
 import { GridColDef } from '@mui/x-data-grid';
-import { Add, DataTable } from '../../components';
-import { products } from '../../data';
+import { useQuery } from '@tanstack/react-query';
+import { AddProduct, DataTable, Modal } from '../../components';
+import { useModal } from '../../components/hooks/useModal';
 
-const columns: GridColDef[] = [
-	{ field: 'id', headerName: 'ID', width: 90 },
+export const productColumns: GridColDef[] = [
+	{ field: 'number', headerName: '№', type: 'text', width: 70 },
+	{ field: 'id', headerName: 'ID', type: 'number', width: 70 },
 	{
 		field: 'img',
 		headerName: 'Image',
+		type: 'text',
 		width: 100,
 		renderCell: params => {
 			return <img src={params.row.img || '/noavatar.png'} alt='' />
@@ -18,71 +19,70 @@ const columns: GridColDef[] = [
 	},
 	{
 		field: 'title',
-		type: 'string',
+		type: 'text',
 		headerName: 'Title',
 		width: 250,
 	},
 	{
 		field: 'color',
-		type: 'string',
+		type: 'text',
 		headerName: 'Color',
-		width: 150,
+		width: 90,
 	},
 	{
 		field: 'price',
-		type: 'string',
+		type: 'text',
 		headerName: 'Price',
-		width: 200,
+		width: 100,
 	},
 	{
 		field: 'producer',
 		headerName: 'Producer',
-		type: 'string',
-		width: 200,
+		type: 'text',
+		width: 120,
 	},
 	{
 		field: 'createdAt',
 		headerName: 'Created At',
-		width: 200,
-		type: 'string',
+		width: 120,
+		type: 'text',
 	},
 	{
 		field: 'inStock',
 		headerName: 'In Stock',
-		width: 150,
+		width: 100,
 		type: 'boolean',
 	},
 ]
 
 export const Products = () => {
-	const [open, setOpen] = useState(false)
-
-	// TEST THE API
-
-	// const { isLoading, data } = useQuery({
-	//   queryKey: ["allproducts"],
-	//   queryFn: () =>
-	//     fetch("http://localhost:8800/api/products").then(
-	//       (res) => res.json()
-	//     ),
-	// });
+	const { isOpen, onClose, onOpen } = useModal()
+	const fetchProducts = async () => {
+		const data = await fetch(`http://localhost:8800/api/products`).then(res => res.json())
+		return data
+	}
+	const { isLoading, data } = useQuery({
+		queryKey: ['allproducts'],
+		queryFn: fetchProducts,
+	})
+	 console.log('allproducts', data)
 
 	return (
 		<div className='products'>
 			<div className='info'>
 				<h1>Products</h1>
-				<button onClick={() => setOpen(true)}>Add New Products</button>
+				<button onClick={() => onOpen()}>Add New Products</button>
 			</div>
-			<DataTable slug='products' columns={columns} rows={products} />
-			{/* TEST THE API */}
-
-			{/* {isLoading ? (
-        "Loading..."
-      ) : (
-        <DataTable slug="products" columns={columns} rows={data} />
-      )} */}
-			{open && <Add slug='product' columns={columns} setOpen={setOpen} />}
+			{isLoading ? (
+				'Loading...'
+			) : (
+				<DataTable slug='products' columns={productColumns} rows={data} />
+			)}
+			{isOpen() && (
+				<Modal onClose={onClose} title='Add New Product'>
+					<AddProduct slug='product' onClose={onClose} itemLength={data.length} />
+				</Modal>
+			)}
 		</div>
 	)
 }
-

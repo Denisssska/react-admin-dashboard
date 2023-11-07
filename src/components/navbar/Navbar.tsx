@@ -4,15 +4,15 @@ export const Navbar = () => {
 	return (
 		<div className='navbar'>
 			<div className='logo'>
-				<img src='logo.svg' alt='logo' />
+				<img src='/logo.svg' alt='logo' />
 				<span>denadmin</span>
 			</div>
 			<div className='icons'>
-				<img src='search.svg' alt='search' className='icon' />
-				<img src='app.svg' alt='app' className='icon' />
-				<img src='expand.svg' alt='expand' className='icon' />
+				<img src='/search.svg' alt='search' className='icon' />
+				<img src='/app.svg' alt='app' className='icon' />
+				<img src='/expand.svg' alt='expand' className='icon' />
 				<div className='notification'>
-					<img src='notifications.svg' alt='notifications' className='icon' />
+					<img src='/notifications.svg' alt='notifications' className='icon' />
 					<span>1</span>
 				</div>
 				<div className='user'>
@@ -23,7 +23,7 @@ export const Navbar = () => {
 					/>
 					<span>Don</span>
 				</div>
-				<img src='settings.svg' alt='settings' className='icon' />
+				<img src='/settings.svg' alt='settings' className='icon' />
 			</div>
 		</div>
 	)

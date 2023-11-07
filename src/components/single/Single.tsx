@@ -1,11 +1,17 @@
-import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import './single.scss'
+import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { AddProduct, Modal } from '..';
+import { useModal } from '../hooks/useModal';
+import './single.scss';
 
 type Props = {
+	slug: string
 	id: number
 	img?: string
+	number?: number
 	title: string
-	info: object
+	createdAt?: string
+	lastName?: string
+	info?: any
 	chart?: {
 		dataKeys: { name: string; color: string }[]
 		data: object[]
@@ -14,22 +20,32 @@ type Props = {
 }
 
 export const Single = (props: Props) => {
+	const { isOpen, onClose, onOpen } = useModal()
 	return (
-		<div className='single'>
+		<div key={props.id} className='single'>
 			<div className='view'>
 				<div className='info'>
 					<div className='topInfo'>
 						{props.img && <img src={props.img} alt='' />}
 						<h1>{props.title}</h1>
-						<button>Update</button>
+						<h1>{props.lastName}</h1>
+						<img onClick={onOpen} className='createBtn' src='/note.svg' alt='create button' />
 					</div>
 					<div className='details'>
-						{Object.entries(props.info).map(item => (
-							<div className='item' key={item[0]}>
-								<span className='itemTitle'>{item[0]}</span>
-								<span className='itemValue'>{item[1]}</span>
-							</div>
-						))}
+						{/* вариант для response из single запроса */}
+						<div className='item'>
+							<span className='itemTitle'>Created:</span>
+							<span className='itemValue'>{props.createdAt}</span>
+						</div>
+
+						{/* вариант для response запроса */}
+						{props.info &&
+							Object.entries(props.info).map(item => (
+								<div className='item' key={item[0]}>
+									<span className='itemTitle'>{item[0]}</span>
+									<span className='itemValue'>{item[1]}</span>
+								</div>
+							))}
 					</div>
 				</div>
 				<hr />
@@ -51,8 +67,8 @@ export const Single = (props: Props) => {
 								<YAxis />
 								<Tooltip />
 								<Legend />
-								{props.chart.dataKeys.map(dataKey => (
-									<Line type='monotone' dataKey={dataKey.name} stroke={dataKey.color} />
+								{props.chart.dataKeys.map((dataKey, id) => (
+									<Line key={id} type='monotone' dataKey={dataKey.name} stroke={dataKey.color} />
 								))}
 							</LineChart>
 						</ResponsiveContainer>
@@ -63,8 +79,8 @@ export const Single = (props: Props) => {
 				<h2>Latest Activities</h2>
 				{props.activities && (
 					<ul>
-						{props.activities.map(activity => (
-							<li key={activity.text}>
+						{props.activities.map((activity, id) => (
+							<li key={id}>
 								<div>
 									<p>{activity.text}</p>
 									<time>{activity.time}</time>
@@ -74,8 +90,22 @@ export const Single = (props: Props) => {
 					</ul>
 				)}
 			</div>
+			{isOpen() && (
+				<Modal onClose={onClose} title='Update Product'>
+					<AddProduct
+						title={props.title}
+						img={props.img}
+						createdAt={props.createdAt}
+						id={props.id}
+						number={props.number}
+						color={props.info?.color}
+						price={props.info?.price}
+						producer={props.info?.producer}
+						slug='product'
+						onClose={onClose}
+					/>
+				</Modal>
+			)}
 		</div>
 	)
 }
-
-

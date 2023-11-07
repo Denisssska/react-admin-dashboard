@@ -7,8 +7,11 @@ import { BarChartBox } from './barChartBox/BarChartBox.tsx';
 import {PieChartBox} from './pieChartBox/PieChartBox.tsx';
 import { BigChartBox } from './bigChartBox/BigChartBox.tsx';
 import {DataTable} from './dataTable/DataTable.tsx';
-import { Add } from './add/Add.tsx';
+
 import { Single } from './single/Single.tsx';
+import { Modal } from './modal/Modal.tsx';
+import { AddProduct } from './add/AddProduct.tsx';
+import { AddUser } from './add/AddUser.tsx';
 export {
 	Navbar,
 	Footer,
@@ -19,6 +22,8 @@ export {
 	PieChartBox,
 	BigChartBox,
 	DataTable,
-	Add,
-	Single
+	AddProduct,
+	AddUser,
+	Single,
+	Modal,
 }

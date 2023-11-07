@@ -1,5 +1,5 @@
-@import "../../styles/variables";
-@import "../../styles/responsive";
+@import "../../styles/variables.scss";
+@import "../../styles/responsive.scss";
 
 .home {
   display: grid;
@@ -19,6 +19,9 @@
   }
   @include sm {
     grid-auto-rows: minmax(120px, auto);
+  }
+  @include xs {
+    grid-auto-rows: minmax(80px, auto);
   }
 
   .box {

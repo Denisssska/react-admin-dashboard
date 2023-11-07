@@ -1,90 +1,100 @@
 import { GridColDef } from '@mui/x-data-grid';
 
-import { useState } from 'react';
 import './Users.scss';
-// import Add from '../../components/add/Add'
-import { Add, DataTable } from '../../components';
-import { userRows } from '../../data';
-// import { useQuery } from "@tanstack/react-query";
+
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { AddUser, DataTable, Modal } from '../../components';
+import { useModal } from '../../components/hooks/useModal';
 
 const columns: GridColDef[] = [
-	{ field: 'id', headerName: 'ID', width: 90 },
+	{ field: 'id', headerName: 'ID', type: 'number', width: 70 },
+	{ field: 'number', headerName: '№', type: 'number', width: 70 },
 	{
 		field: 'img',
 		headerName: 'Avatar',
 		width: 100,
+		type: 'text',
 		renderCell: params => {
 			return <img src={params.row.img || '/noavatar.png'} alt='' />
 		},
 	},
 	{
 		field: 'firstName',
-		type: 'string',
+		type: 'text',
 		headerName: 'First name',
 		width: 150,
 	},
 	{
 		field: 'lastName',
-		type: 'string',
+		type: 'text',
 		headerName: 'Last name',
 		width: 150,
 	},
 	{
 		field: 'email',
-		type: 'string',
+		type: 'text',
 		headerName: 'Email',
 		width: 200,
 	},
 	{
 		field: 'phone',
-		type: 'string',
+		type: 'text',
 		headerName: 'Phone',
-		width: 200,
+		width: 120,
 	},
 	{
 		field: 'createdAt',
 		headerName: 'Created At',
-		width: 200,
-		type: 'string',
+		width: 120,
+		type: 'text',
 	},
 	{
 		field: 'verified',
 		headerName: 'Verified',
-		width: 150,
+		width: 100,
 		type: 'boolean',
 	},
 ]
 
 export const Users = () => {
-	const [open, setOpen] = useState(false)
+	const { isOpen, onClose, onOpen } = useModal()
+
+	const queryClient = useQueryClient()
 
 	// TEST THE API
+	const fetchUsers = async () => {
+		const data = await fetch(`http://localhost:8800/api/users`).then(res => res.json())
+		return data
+	}
+	const { isLoading, data } = useQuery({
+		queryKey: ['allusers'],
+		queryFn: fetchUsers,
+	})
 
-	// const { isLoading, data } = useQuery({
-	//   queryKey: ["allusers"],
-	//   queryFn: () =>
-	//     fetch("http://localhost:8800/api/users").then(
-	//       (res) => res.json()
-	//     ),
-	// });
-
+	const getUser = async (id: number) => {
+		const user = await data.find((user: { id: number }) => user.id === id)
+		// Кэшируем выбранного пользователя
+		queryClient.setQueryData(['user'], user)
+	}
+	// console.log(queryClient.getQueryData(['user']))
 	return (
 		<div className='users'>
 			<div className='info'>
 				<h1>Users</h1>
-				<button onClick={() => setOpen(true)}>Add New User</button>
+				<button onClick={() => onOpen()}>Add New User</button>
+				<button onClick={() => onClose()}>Close modal</button>
 			</div>
-			<DataTable slug='users' columns={columns} rows={userRows} />
-			{/* TEST THE API */}
 
-			{/* {isLoading ? (
-        "Loading..."
-      ) : (
-        <DataTable slug="users" columns={columns} rows={data} />
-      )} */}
-			{open && <Add slug='user' columns={columns} setOpen={setOpen} />}
+			{isLoading ? (
+				'Loading...'
+			) : (
+				<DataTable slug='users' columns={columns} rows={data} callBack={id => getUser(id)} />
+			)}
+			{isOpen() && (
+				<Modal title='Add new User' onClose={onClose}>
+					<AddUser slug='user' columns={columns} onClose={onClose} itemLength={data.length} />
+				</Modal>
+			)}
 		</div>
 	)
 }
-
-
