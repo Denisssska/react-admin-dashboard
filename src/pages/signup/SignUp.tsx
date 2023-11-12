@@ -8,13 +8,46 @@ import { useForm } from 'react-hook-form';
 
 import { Link, useNavigate } from 'react-router-dom';
 
-import { signInSchema, signInSchemaType } from '../../validate/signInSchema';
+import { signupSchema, signupSchemaType } from '../../validate/signupSchema';
 
-import './login.scss';
-export const Login = () => {
-  const id = useId();
+import '../login/login.scss';
+
+import './signup.scss';
+
+export const SignUp = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const id = useId();
+  const createUser = async (params: signupSchemaType) => {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const response = await fetch(`/auth/signup`, {
+        method: 'post',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(params),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(JSON.stringify(data));
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+  const mutation = useMutation({
+    mutationFn: createUser,
+    onError: e => {
+      console.log(e);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['currentuser'] }).then(() => navigate('/login'));
+    },
+  });
   const {
     register,
     handleSubmit,
@@ -24,55 +57,45 @@ export const Login = () => {
     watch,
     trigger,
     formState: { isSubmitting, errors },
-  } = useForm<signInSchemaType>({
+  } = useForm<signupSchemaType>({
     mode: 'onTouched',
     shouldFocusError: true, //параметр определяет, следует ли устанавливать фокус на первое поле с ошибкой после отправки формы.
-    resolver: zodResolver(signInSchema),
+    resolver: zodResolver(signupSchema),
     defaultValues: {},
   });
-  const loginUser = async (params: signInSchemaType) => {
-    // eslint-disable-next-line no-useless-catch
-    try {
-      const response = await fetch(`/auth/signin`, {
-        method: 'post',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(params),
-      });
-      const data = await response.json();
-      console.log(data);
-
-      if (!response.ok) {
-        throw new Error(JSON.stringify(data));
-      }
-      return data;
-    } catch (e) {
-      throw e;
-    }
-  };
-  const mutation = useMutation({
-    mutationFn: loginUser,
-    onError: e => {
-      console.log(e);
-    },
-    onSuccess: async data => {
-      console.log(data);
-      queryClient.setQueryData(['currentuser'], data);
-      navigate('/');
-    },
-  });
-  const onSubmit = (data: signInSchemaType) => {
+  const onSubmit = (data: signupSchemaType) => {
     mutation.mutateAsync(data);
   };
+  console.log(mutation.isPending);
+
   return (
     <div className="login">
-      <h1>Login</h1>
+      <h1>Register</h1>
       <form autoComplete="false" onSubmit={handleSubmit(onSubmit)}>
         <div className="formItem">
+          <label htmlFor={`${id}-username`}>User name</label>
+          <input
+            autoComplete="false"
+            id={`${id}-username`}
+            type="text"
+            placeholder="User name"
+            {...register('username')}
+          />
+          {errors[`username`] && (
+            <p className="errorMessage" id={`${id}-username`} aria-live="assertive">
+              {String(errors.username.message)}
+            </p>
+          )}
+        </div>
+        <div className="formItem">
           <label htmlFor={`${id}-email`}>Email</label>
-          <input id={`${id}-email`} type="email" placeholder="Email" {...register('email')} />
+          <input
+            autoComplete="false"
+            id={`${id}-email`}
+            type="text"
+            placeholder="Email"
+            {...register('email')}
+          />
           {errors[`email`] && (
             <p className="errorMessage" id={`${id}-email`} aria-live="assertive">
               {String(errors.email.message)}
@@ -94,10 +117,11 @@ export const Login = () => {
           </button>
         </div>
         <div className="formItem">
-          Dont have an account?
-          <Link to={'/signup'}>
+          <button type="button">continue with google</button>
+          Have an account?
+          <Link to={'/login'}>
             <button className="signup" type="button">
-              Sign up
+              login
             </button>
           </Link>
         </div>

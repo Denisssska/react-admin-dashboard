@@ -1,5 +1,5 @@
-@import "./variables.scss";
-@import "./responsive.scss";
+@import './variables.scss';
+@import './responsive.scss';
 
 * {
   margin: 0;
@@ -13,7 +13,7 @@ a {
 }
 
 .main {
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
   background-color: $main-bg;
   color: $main-color;
 }
@@ -27,7 +27,7 @@ a {
   padding: 5px 20px;
   border-right: 2px solid $soft-bg;
 
-  @include lg{
+  @include lg {
     width: max-content;
     padding: 5px 10px;
   }

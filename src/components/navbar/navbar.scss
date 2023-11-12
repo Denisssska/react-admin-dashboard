@@ -1,4 +1,4 @@
-@import "../../styles/responsive.scss";
+@import '../../styles/responsive.scss';
 
 .navbar {
   width: 100%;
@@ -18,8 +18,8 @@
     align-items: center;
     gap: 20px;
 
-    .icon{
-      @include sm{
+    .icon {
+      @include sm {
         display: none;
       }
     }
