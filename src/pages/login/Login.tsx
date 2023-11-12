@@ -8,12 +8,21 @@ import { useForm } from 'react-hook-form';
 
 import { Link, useNavigate } from 'react-router-dom';
 
+import './login.scss';
+
+import { useActionCreators, useAppSelector } from '../../store/hooks/hooks';
+
+import { loginTC } from '../../store/slices/userReducer';
+
 import { signInSchema, signInSchemaType } from '../../validate/signInSchema';
 
-import './login.scss';
 export const Login = () => {
+  const {currentUser, loading, error} = useAppSelector(state => state.user);
+   console.log(loading);
+
+  const actions = useActionCreators({ loginTC });
   const id = useId();
-  const queryClient = useQueryClient();
+
   const navigate = useNavigate();
   const {
     register,
@@ -30,41 +39,10 @@ export const Login = () => {
     resolver: zodResolver(signInSchema),
     defaultValues: {},
   });
-  const loginUser = async (params: signInSchemaType) => {
-    // eslint-disable-next-line no-useless-catch
-    try {
-      const response = await fetch(`/auth/signin`, {
-        method: 'post',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(params),
-      });
-      const data = await response.json();
-      console.log(data);
 
-      if (!response.ok) {
-        throw new Error(JSON.stringify(data));
-      }
-      return data;
-    } catch (e) {
-      throw e;
-    }
-  };
-  const mutation = useMutation({
-    mutationFn: loginUser,
-    onError: e => {
-      console.log(e);
-    },
-    onSuccess: async data => {
-      console.log(data);
-      queryClient.setQueryData(['currentuser'], data);
-      navigate('/');
-    },
-  });
-  const onSubmit = (data: signInSchemaType) => {
-    mutation.mutateAsync(data);
+  const onSubmit = async (data: signInSchemaType) => {
+    await actions.loginTC(data);
+
   };
   return (
     <div className="login">
@@ -89,7 +67,7 @@ export const Login = () => {
           )}
         </div>
         <div className="formItem">
-          <button disabled={mutation.isPending} type="submit">
+          <button disabled={loading} type="submit">
             Submit
           </button>
         </div>
