@@ -49,4 +49,4 @@ export const productsSchema = z.object({
   // .regex(phoneRegex, { message: 'Укажите корректный price' }),
 });
 
-export type productsSchemaType = z.infer<typeof productsSchema>;
+export type ProductsSchemaType = z.infer<typeof productsSchema>;

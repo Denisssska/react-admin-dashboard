@@ -4,9 +4,7 @@ const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,32}/;
 // eslint-disable-next-line no-useless-escape
 const emailRegex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 
-export const signupSchema = z.object({
-  username: z.string().min(1, 'Поле "username" обязательное'),
-  // .regex(emailRegex, { message: 'Укажите свой настоящий email' }),
+export const signInSchema = z.object({
   email: z
     .string()
     .min(1, 'Поле "Email" обязательное')
@@ -21,4 +19,4 @@ export const signupSchema = z.object({
 // 	path: ['confirmPassword1'],
 // })
 
-export type signupSchemaType = z.infer<typeof signupSchema>;
+export type SignInSchemaType = z.infer<typeof signInSchema>;

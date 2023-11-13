@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form';
 
 import { usersColumns } from '../../pages/users/Users';
 
-import { usersSchema, usersSchemaType } from '../../validate/usersSchema';
+import { usersSchema, UsersSchemaType } from '../../utils/validate/usersSchema';
 type Props = {
   slug: string;
   number?: number;
@@ -81,7 +81,7 @@ export const AddUser: FC<Props> = ({
     watch,
     trigger,
     formState: { isSubmitting, errors },
-  } = useForm<usersSchemaType>({
+  } = useForm<UsersSchemaType>({
     mode: 'onTouched',
     shouldFocusError: true, //параметр определяет, следует ли устанавливать фокус на первое поле с ошибкой после отправки формы.
     resolver: zodResolver(usersSchema),
@@ -92,7 +92,7 @@ export const AddUser: FC<Props> = ({
   //доделать типизацию
 
   // доделать логин и регистрацию
-  const addUser = async (params: usersSchemaType) => {
+  const addUser = async (params: UsersSchemaType) => {
     console.log(params);
     const data = await fetch(`http://localhost:8800/api/${slug}s`, {
       method: 'post',
@@ -104,7 +104,7 @@ export const AddUser: FC<Props> = ({
     });
     return data;
   };
-  const updateUser = async (params: usersSchemaType) => {
+  const updateUser = async (params: UsersSchemaType) => {
     console.log(params);
     const data = await fetch(`http://localhost:8800/api/${slug}s/${id}`, {
       method: 'PUT',
@@ -125,7 +125,7 @@ export const AddUser: FC<Props> = ({
   });
   // console.log(watch('img') && watch('img')[0])
 
-  const onSubmit = (data: usersSchemaType) => {
+  const onSubmit = (data: UsersSchemaType) => {
     const body = {
       ...data,
       // img: data.img && watch('img')[0],

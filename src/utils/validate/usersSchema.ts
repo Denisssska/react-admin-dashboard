@@ -35,4 +35,4 @@ export const usersSchema = z.object({
   img: z.any(),
 });
 
-export type usersSchemaType = z.infer<typeof usersSchema>;
+export type UsersSchemaType = z.infer<typeof usersSchema>;

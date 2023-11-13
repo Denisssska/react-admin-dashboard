@@ -1,5 +1,3 @@
-import { QueryCache, useQuery, useQueryClient } from '@tanstack/react-query';
-
 import { BarChartBox, BigChartBox, ChartBox, PieChartBox, TopBox } from '../../components';
 
 import {
@@ -13,31 +11,6 @@ import {
 
 import './home.scss';
 export const Home = () => {
-  const queryClient = useQueryClient();
-  // const queryCache = new QueryCache({
-  // 	onError: error => {
-  // 		console.log(error)
-  // 	},
-  // 	onSuccess: data => {
-  // 		console.log(data)
-  // 	},
-  // 	onSettled: (data, error) => {
-  // 		console.log(data, error)
-  // 	},
-  // })
-  // const query = queryCache.find({
-  // 	queryKey: ['currentUser'],
-  // })
-  const getCurrentUser = () => {
-    console.log('сработал запрос на получения юзера');
-    return queryClient.getQueryData(['currentuser']);
-  };
-  const { isLoading, data } = useQuery({
-    queryKey: ['currentuser'],
-    queryFn: getCurrentUser,
-  });
-  console.log(data);
-
   return (
     <div className="home">
       <div className="box box1">

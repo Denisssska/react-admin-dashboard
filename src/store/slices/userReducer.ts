@@ -2,22 +2,25 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { userApi } from '../../api/userApi';
 
+import { ProfileSchemaType, SignInSchemaType, SignUpSchemaType } from '../../utils';
+
 const initialState = {
-  currentUser: null,
+  newUser: null,
+  currentUser: null as ProfileSchemaType,
   loading: false,
   error: false,
-  errorText:''
+  errorText: '',
 };
 
 export const loginTC = createAsyncThunk(
   '/auth/loginTC',
-  async ({ email, password }: SignInPayload, thunkAPI) => {
+  async ({ email, password }: SignInSchemaType, thunkAPI) => {
     try {
       thunkAPI.dispatch(userActions.signInStart());
       const response = await userApi.signIn({ email, password });
       console.log(response);
-            if (!response.ok) {
-        const errorText =  response.statusText;
+      if (!response.ok) {
+        const errorText = response.statusText;
         console.log(errorText);
 
         thunkAPI.dispatch(userActions.signInFailure(errorText));
@@ -31,10 +34,35 @@ export const loginTC = createAsyncThunk(
     }
   }
 );
+export const signUpTC = createAsyncThunk(
+  '/auth/signupTC',
+  async ({ email, password, username }: SignUpSchemaType, thunkAPI) => {
+    try {
+      thunkAPI.dispatch(userActions.signInStart());
+      const response = await userApi.registration({ email, password, username });
+      const data = await response.json();
+      if (!response.ok) {
+        const errorText = response.statusText;
+        console.log(errorText);
+
+        thunkAPI.dispatch(userActions.signInFailure(errorText));
+        throw new Error(errorText || 'something was wrong' || JSON.stringify(data));
+      }
+
+      thunkAPI.dispatch(userActions.signUpSuccess(data.message));
+    } catch (e: any) {
+      console.log(e);
+      return thunkAPI.rejectWithValue(e.message);
+    }
+  }
+);
 const userSlice = createSlice({
   name: 'user',
   initialState: initialState,
   reducers: {
+    resetNewUser: state => {
+      state.newUser = null;
+    },
     signInStart: state => {
       state.loading = true;
     },
@@ -43,8 +71,14 @@ const userSlice = createSlice({
       state.error = false;
       state.currentUser = action.payload;
     },
+    signUpSuccess: (state, action) => {
+      state.loading = false;
+      state.error = false;
+      state.newUser = action.payload;
+    },
     signInFailure: (state, action) => {
       state.loading = false;
+      state.newUser = null;
       state.error = true;
       state.errorText = action.payload;
     },

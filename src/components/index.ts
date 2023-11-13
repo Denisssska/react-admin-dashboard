@@ -10,6 +10,8 @@ import { ChartBox } from './chartBox/ChartBox.tsx';
 
 import { DataTable } from './dataTable/DataTable.tsx';
 
+import { ErrorBoundary } from './error/ErrorBoundary.tsx';
+
 import { Footer } from './footer/Footer.tsx';
 
 import { Menu } from './menu/Menu.tsx';
@@ -30,12 +32,12 @@ export {
   BarChartBox,
   BigChartBox,
   ChartBox,
-  DataTable,
-  Footer,
+  DataTable, ErrorBoundary, Footer,
   Menu,
   Modal,
   Navbar,
   PieChartBox,
   Single,
-  TopBox,
+  TopBox
 };
+

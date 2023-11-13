@@ -1,43 +1,34 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
-import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import './styles/global.scss';
 
-import { Footer, Menu, Navbar } from './components';
+import { ErrorBoundary } from './components';
 
-import { Home, Login, Product, Products, SignUp, User, Users } from './pages';
+import Layout from './Layout';
 
-const queryClient = new QueryClient();
+import { Home, Login, Product, Products, Profile, SignUp, User, Users } from './pages';
+
+import PrivateRoute from './privateRoute/PrivateRoute';
+
 const App = () => {
-  const Layout = () => {
-    return (
-      <div className="main">
-        <Navbar />
-        <div className="container">
-          <div className="menuContainer">
-            <Menu />
-          </div>
-          <div className="contentContainer">
-            <QueryClientProvider client={queryClient}>
-              <Outlet />
-            </QueryClientProvider>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  };
-
   const router = createBrowserRouter([
     {
       path: '/',
-      element: <Layout />,
+      element: (
+        <PrivateRoute>
+          <Layout />
+        </PrivateRoute>
+      ),
+      errorElement: <ErrorBoundary />,
 
       children: [
         {
           path: '/',
           element: <Home />,
+        },
+        {
+          path: '/profile',
+          element: <Profile />,
         },
         {
           path: '/users',
@@ -50,21 +41,20 @@ const App = () => {
         {
           path: '/users/:id',
           element: <User />,
-          // errorElement: <ErrorBoundary />,
         },
         {
           path: '/products/:id',
           element: <Product />,
         },
-        {
-          path: '/login',
-          element: <Login />,
-        },
-        {
-          path: '/signup',
-          element: <SignUp />,
-        },
       ],
+    },
+    {
+      path: '/login',
+      element: <Login />,
+    },
+    {
+      path: '/signup',
+      element: <SignUp />,
     },
   ]);
   return <RouterProvider router={router} />;

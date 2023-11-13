@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form';
 
 import { productColumns } from '../../pages/products/Products';
 
-import { productsSchema, productsSchemaType } from '../../validate/productsSchema';
+import { productsSchema, ProductsSchemaType } from '../../utils/validate/productsSchema';
 
 type Props = {
   number?: number;
@@ -82,7 +82,7 @@ export const AddProduct: FC<Props> = ({
     watch,
     trigger,
     formState: { isSubmitting, errors },
-  } = useForm<productsSchemaType>({
+  } = useForm<ProductsSchemaType>({
     mode: 'onTouched',
     shouldFocusError: true, //параметр определяет, следует ли устанавливать фокус на первое поле с ошибкой после отправки формы.
     resolver: zodResolver(productsSchema),
@@ -96,7 +96,7 @@ export const AddProduct: FC<Props> = ({
   // добавить фото в форму создания
   // доделать айдишники
   // доделать логин и регистрацию
-  const addProduct = async (params: productsSchemaType) => {
+  const addProduct = async (params: ProductsSchemaType) => {
     const data = await fetch(`http://localhost:8800/api/${slug}s`, {
       method: 'post',
       headers: {
@@ -108,7 +108,7 @@ export const AddProduct: FC<Props> = ({
     console.log(data);
     return data;
   };
-  const updateProduct = async (params: productsSchemaType) => {
+  const updateProduct = async (params: ProductsSchemaType) => {
     const data = await fetch(`http://localhost:8800/api/${slug}s/${id}`, {
       method: 'PUT',
       headers: {
@@ -148,7 +148,7 @@ export const AddProduct: FC<Props> = ({
   });
   // console.log(watch('img') && watch('img')[0])
 
-  const onSubmit = (data: productsSchemaType) => {
+  const onSubmit = (data: ProductsSchemaType) => {
     const body = {
       ...data,
       // img: data.img && watch('img')[0],

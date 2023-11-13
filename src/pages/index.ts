@@ -6,9 +6,12 @@ import { Product } from './product/Product';
 
 import { Products } from './products/Products';
 
+import { Profile } from './profile/profile';
+
 import { SignUp } from './signup/SignUp';
 
 import { User } from './user/User';
 
 import { Users } from './users/Users';
-export { Home, Products, Users, Login, SignUp, User, Product };
+export { Home, Login, Product, Products, Profile, SignUp, User, Users };
+
