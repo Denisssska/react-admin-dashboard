@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 // eslint-disable-next-line no-useless-escape
 const emailRegex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+// eslint-disable-next-line no-useless-escape
+const base64ImageRegExp = /^data:image\/([a-zA-Z]*);base64,([^\"]*)/;
 
 export const profileSchema = z.object({
   username: z
@@ -15,9 +17,9 @@ export const profileSchema = z.object({
     .string()
     .min(1, 'Поле "Email" обязательное')
     .regex(emailRegex, { message: 'Укажите свой настоящий email' }),
-  createdAt: z.string(),
+  createdAt: z.string().optional(),
   _id: z.string(),
-  profilePhoto: z.string(),
+  profilePhoto: z.any()
 });
 
 export type ProfileSchemaType = z.infer<typeof profileSchema>;

@@ -6,14 +6,20 @@
   justify-content: center;
   align-items: center;
   height: 100dvh;
-  img {
-    border-radius: 10%;
-    cursor: pointer;
-    width: 150px;
-    object-fit: cover;
-    height: 200px;
-  }
+
   form {
+    .label-img{
+      display: contents;
+      img {
+      margin: 0 auto;
+      border-radius: 10%;
+      cursor: pointer;
+      width: 150px;
+      object-fit: cover;
+      height: 200px;
+    }
+    }
+
     display: flex;
     width: 100%;
     gap: 10px;

@@ -6,6 +6,8 @@ import { useForm } from 'react-hook-form';
 
 import './profile.scss';
 
+import { userApi } from '../../api/userApi';
+
 import { profileSelector, useAppSelector } from '../../store';
 
 import { ProfileSchemaType, profileSchema } from '../../utils';
@@ -13,7 +15,7 @@ import { ProfileSchemaType, profileSchema } from '../../utils';
 export const Profile = () => {
   const id = useId();
   const user = useAppSelector(profileSelector);
-  console.log(user);
+  //console.log(user);
   const {
     register,
     handleSubmit,
@@ -35,15 +37,74 @@ export const Profile = () => {
       profilePhoto: user.profilePhoto,
     },
   });
+  const typeOfImage = (data: string | FileList = watch('profilePhoto')) => {
+    let image = '';
+    if (typeof data === 'string') {
+      image = data;
+    }
+    if (typeof data === 'object' && data[0] instanceof File) {
+      const selectedFile = data[0];
+      image = URL.createObjectURL(selectedFile);
+    }
+    return image;
+  };
+  const convertToBase64 = (file: File): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+
+      reader.onload = () => {
+        resolve(reader.result);
+      };
+
+      reader.onerror = error => {
+        reject(error);
+      };
+    });
+  };
+
+
   const onSubmit = async (data: ProfileSchemaType) => {
-    console.log(data);
+    const formData = new FormData();
+    if (data.profilePhoto instanceof FileList) {
+      const file = await convertToBase64(data.profilePhoto[0]);
+      formData.append('profilePhoto', file);
+    } else {
+      formData.append('profilePhoto', data.profilePhoto);
+    }
+    formData.append('username', data.username);
+    formData.append('_id', data._id);
+    formData.append('email', data.email);
+
+    const val = Object.fromEntries(formData);
+    const res = await userApi.updateUser(formData);
+console.log(res);
+
   };
   return (
     <div className="main">
       <div className="profile">
-        <img src={user.profilePhoto} alt="profile photo" />
         {/* <h1>Register</h1> */}
         <form autoComplete="false" onSubmit={handleSubmit(onSubmit)}>
+          <div className="formItem">
+            <label className="label-img" htmlFor={`${id}-profilePhoto`}>
+              <img src={typeOfImage()} alt="profile photo" />
+            </label>
+            <input
+              accept="image/*"
+              hidden
+              id={`${id}-profilePhoto`}
+              type="file"
+              placeholder="profilePhoto"
+              {...register('profilePhoto')}
+            />
+            {errors[`profilePhoto`] && (
+              <p className="errorMessage" id={`${id}-profilePhoto`} aria-live="assertive">
+                {String(errors.profilePhoto.message)}
+              </p>
+            )}
+          </div>
+
           <div className="formItem">
             <label htmlFor={`${id}-id`}>ID</label>
             <input readOnly={true} id={`${id}-_id`} type="text" placeholder="id" {...register('_id')} />
@@ -77,20 +138,7 @@ export const Profile = () => {
               </p>
             )}
           </div>
-          <div className="formItem">
-            <label htmlFor={`${id}-profilePhoto`}>Photo</label>
-            <input
-              id={`${id}-profilePhoto`}
-              type="file"
-              placeholder="profilePhoto"
-              {...register('profilePhoto')}
-            />
-            {errors[`profilePhoto`] && (
-              <p className="errorMessage" id={`${id}-profilePhoto`} aria-live="assertive">
-                {String(errors.profilePhoto.message)}
-              </p>
-            )}
-          </div>
+
           <div className="formItem">
             <button type="submit">Update</button>
           </div>
