@@ -24,23 +24,24 @@ export const userApi = {
     });
   },
 
-  async updateUser(data: FormData) {
-    const userId = data.get('_id');
-    return await customFetch(`/user/${userId}`, {
+  async updateUser(data: UpdateUser) {
+    // console.log(data.get('profilePhoto'));
+
+    // const userId = data.get('_id');
+    return await customFetch( `/user/${data._id}`, {
       method: 'PATCH',
-      body: data,
+      // body: data,
+      body: JSON.stringify(data),
       headers: {
         Accept: 'application/json',
-        // 'Content-Type': 'application/json',
+        'Content-Type': 'application/json',
       },
     });
-    // return await fetch(`http://localhost:8800/user/${userId}`, {
-    //   method: 'PATCH',
-    //   headers: {
-    //     Accept: 'application/json',
-    //     // 'Content-Type': 'multipart/form-data',
-    //   },
-    //   body: data,
-    // });
+  },
+  async updateUserImg(data: FormData) {
+    return await fetch(`${import.meta.env.VITE_CLOUDY_PORT}/image/upload`, {
+      method: 'POST',
+      body: data,
+    });
   },
 };

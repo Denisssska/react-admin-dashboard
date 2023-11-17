@@ -6,16 +6,21 @@ import { useForm } from 'react-hook-form';
 
 import './profile.scss';
 
-import { userApi } from '../../api/userApi';
+import { typeOfImage } from '../../components/hooks/typeOfImage';
 
-import { profileSelector, useAppSelector } from '../../store';
+import { loadingSelector, profileSelector, useActionCreators, useAppSelector } from '../../store';
+
+import { updateUserImgTC, updateUserTC } from '../../store/slices/userReducer';
 
 import { ProfileSchemaType, profileSchema } from '../../utils';
 
 export const Profile = () => {
   const id = useId();
   const user = useAppSelector(profileSelector);
-  //console.log(user);
+  const loading = useAppSelector(loadingSelector);
+  const actions = useActionCreators({ updateUserImgTC, updateUserTC });
+console.log(loading);
+
   const {
     register,
     handleSubmit,
@@ -37,50 +42,32 @@ export const Profile = () => {
       profilePhoto: user.profilePhoto,
     },
   });
-  const typeOfImage = (data: string | FileList = watch('profilePhoto')) => {
-    let image = '';
-    if (typeof data === 'string') {
-      image = data;
-    }
-    if (typeof data === 'object' && data[0] instanceof File) {
-      const selectedFile = data[0];
-      image = URL.createObjectURL(selectedFile);
-    }
-    return image;
-  };
-  const convertToBase64 = (file: File): Promise<any> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
 
-      reader.onload = () => {
-        resolve(reader.result);
-      };
-
-      reader.onerror = error => {
-        reject(error);
-      };
-    });
-  };
-
-
-  const onSubmit = async (data: ProfileSchemaType) => {
+  const uploadImageToCloudinary = async (image: File) => {
+    const data: UploadImageData = {
+      file: image,
+      upload_preset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
+      cloud_name: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
+      folder: 'Cloudinary-admin-users',
+    };
     const formData = new FormData();
-    if (data.profilePhoto instanceof FileList) {
-      const file = await convertToBase64(data.profilePhoto[0]);
-      formData.append('profilePhoto', file);
-    } else {
-      formData.append('profilePhoto', data.profilePhoto);
+    for (const key in data) {
+      formData.append(key, data[key]);
     }
-    formData.append('username', data.username);
-    formData.append('_id', data._id);
-    formData.append('email', data.email);
-
-    const val = Object.fromEntries(formData);
-    const res = await userApi.updateUser(formData);
-console.log(res);
-
+    return await actions.updateUserImgTC(formData);
   };
+  //два варианта: либо на бэк base64 либо на бэк урл ,а фото на cloudinary
+  const onSubmit = async (data: ProfileSchemaType) => {
+    if (data.profilePhoto instanceof FileList) {
+      const savedPhoto = await uploadImageToCloudinary(data.profilePhoto[0]);
+
+      const updatedUser = { ...data, profilePhoto: savedPhoto.payload };
+      await actions.updateUserTC(updatedUser);
+    } else {
+      await actions.updateUserTC(data);
+    }
+  };
+
   return (
     <div className="main">
       <div className="profile">
@@ -88,7 +75,7 @@ console.log(res);
         <form autoComplete="false" onSubmit={handleSubmit(onSubmit)}>
           <div className="formItem">
             <label className="label-img" htmlFor={`${id}-profilePhoto`}>
-              <img src={typeOfImage()} alt="profile photo" />
+              <img src={typeOfImage(watch('profilePhoto'))} alt="profile photo" />
             </label>
             <input
               accept="image/*"
@@ -140,7 +127,9 @@ console.log(res);
           </div>
 
           <div className="formItem">
-            <button type="submit">Update</button>
+            <button disabled={loading} type="submit">
+              Update
+            </button>
           </div>
           <div className="formItem">
             <button className="signup" type="button">
