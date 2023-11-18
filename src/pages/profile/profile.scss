@@ -8,6 +8,7 @@
   height: 100dvh;
 
   form {
+
     .label-img{
       display: contents;
       img {
@@ -41,6 +42,9 @@
         outline: none;
         border: 1px solid $soft-color;
         border-radius: 3px;
+      }
+      .ID-Input{
+        color: #9e9c9a;
       }
       .errorMessage {
         font-size: small;

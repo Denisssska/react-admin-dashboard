@@ -6,12 +6,9 @@ import { ProfileSchemaType, SignInSchemaType, SignUpSchemaType } from '../../uti
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-
 const initialState = {
   newUser: null,
-
   currentUser: null as ProfileSchemaType,
-
   loading: false,
   error: false,
   errorText: '',
@@ -77,7 +74,7 @@ export const updateUserImgTC = createAsyncThunk('/auth/updateUserImgTC', async (
     thunkAPI.dispatch(userActions.updateImgSuccess(data.secure_url));
     return data.secure_url;
   } catch (e: any) {
-    console.log(e);
+    thunkAPI.dispatch(userActions.failure(e.message));
     return thunkAPI.rejectWithValue(e.message);
   }
 });
@@ -96,8 +93,10 @@ export const updateUserTC = createAsyncThunk('/auth/updateUserTC', async (body: 
     }
 
     thunkAPI.dispatch(userActions.signInSuccess(data));
+    return data;
   } catch (e: any) {
-    console.log(e);
+    thunkAPI.dispatch(userActions.failure(e.message));
+
     return thunkAPI.rejectWithValue(e.message);
   }
 });

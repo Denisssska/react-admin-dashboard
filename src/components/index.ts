@@ -25,19 +25,21 @@ import { PieChartBox } from './pieChartBox/PieChartBox.tsx';
 import { Single } from './single/Single.tsx';
 
 import { TopBox } from './topBox/TopBox.tsx';
-
+import { Preloader } from './preloader/Preloader.tsx';
 export {
   AddProduct,
   AddUser,
   BarChartBox,
   BigChartBox,
   ChartBox,
-  DataTable, ErrorBoundary, Footer,
+  DataTable,
+  ErrorBoundary,
+  Footer,
   Menu,
   Modal,
   Navbar,
   PieChartBox,
   Single,
-  TopBox
+  TopBox,
+  Preloader,
 };
-

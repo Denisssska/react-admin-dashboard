@@ -1,10 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { useId } from 'react';
+import { useId, useState } from 'react';
 
 import { useForm } from 'react-hook-form';
 
 import './profile.scss';
+
+import toast from 'react-hot-toast';
 
 import { typeOfImage } from '../../components/hooks/typeOfImage';
 
@@ -19,7 +21,7 @@ export const Profile = () => {
   const user = useAppSelector(profileSelector);
   const loading = useAppSelector(loadingSelector);
   const actions = useActionCreators({ updateUserImgTC, updateUserTC });
-console.log(loading);
+  console.log(loading);
 
   const {
     register,
@@ -56,15 +58,31 @@ console.log(loading);
     }
     return await actions.updateUserImgTC(formData);
   };
+  const watchToast = (value: any) => {
+    if (value.error) {
+      toast.error(`Не удалось обновить ${user.username}!`);
+    } else {
+      toast.success(`${user.username} успешно обновлен!`);
+    }
+  };
+
   //два варианта: либо на бэк base64 либо на бэк урл ,а фото на cloudinary
   const onSubmit = async (data: ProfileSchemaType) => {
     if (data.profilePhoto instanceof FileList) {
       const savedPhoto = await uploadImageToCloudinary(data.profilePhoto[0]);
-
+      if (savedPhoto.payload === 'Failed to fetch') {
+        toast.error(`Не удалось обновить ${user.username}!`);
+        return;
+      }
       const updatedUser = { ...data, profilePhoto: savedPhoto.payload };
-      await actions.updateUserTC(updatedUser);
+      const savedUpdates = await actions.updateUserTC(updatedUser);
+      await Promise.all([savedPhoto, savedUpdates]).then(res => {
+        watchToast(res[1]);
+      });
     } else {
-      await actions.updateUserTC(data);
+      await actions.updateUserTC(data).then(res => {
+        watchToast(res);
+      });
     }
   };
 
@@ -94,7 +112,14 @@ console.log(loading);
 
           <div className="formItem">
             <label htmlFor={`${id}-id`}>ID</label>
-            <input readOnly={true} id={`${id}-_id`} type="text" placeholder="id" {...register('_id')} />
+            <input
+              className="ID-Input"
+              readOnly={true}
+              id={`${id}-_id`}
+              type="text"
+              placeholder="id"
+              {...register('_id')}
+            />
             {errors[`_id`] && (
               <p className="errorMessage" id={`${id}-_id`} aria-live="assertive">
                 {String(errors._id.message)}
@@ -132,12 +157,13 @@ console.log(loading);
             </button>
           </div>
           <div className="formItem">
-            <button className="signup" type="button">
+            <button onClick={()=>alert('Точно удалить?')} className="signup" type="button">
               Delete
             </button>
           </div>
         </form>
       </div>
+      <Preloader />
     </div>
   );
 };

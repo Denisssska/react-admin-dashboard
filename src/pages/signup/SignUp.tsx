@@ -95,7 +95,7 @@ if(newUser) return <Navigate to="/login" replace />;
             <button type="button">continue with google</button>
             Have an account?
             <Link to={'/login'}>
-              <button className="signup" type="button">
+              <button  className="signup" type="button">
                 login
               </button>
             </Link>

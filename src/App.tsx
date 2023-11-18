@@ -10,6 +10,8 @@ import { Home, Login, Product, Products, Profile, SignUp, User, Users } from './
 
 import PrivateRoute from './privateRoute/PrivateRoute';
 
+import { ToasterProvider } from './providers/ToasterProvider';
+
 const App = () => {
   const router = createBrowserRouter([
     {
@@ -50,11 +52,21 @@ const App = () => {
     },
     {
       path: '/login',
-      element: <Login />,
+      element: (
+        <>
+          <Login />
+          <ToasterProvider />
+        </>
+      ),
     },
     {
       path: '/signup',
-      element: <SignUp />,
+      element: (
+        <>
+          <SignUp />
+          <ToasterProvider />
+        </>
+      ),
     },
   ]);
   return <RouterProvider router={router} />;
