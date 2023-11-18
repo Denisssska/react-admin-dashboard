@@ -30,6 +30,7 @@ export const loginTC = createAsyncThunk(
       }
       const data = await response.json();
       thunkAPI.dispatch(userActions.signInSuccess(data));
+      return data;
     } catch (e: any) {
       console.log(e);
       return thunkAPI.rejectWithValue(e.message);

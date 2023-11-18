@@ -10,6 +10,10 @@ import '../login/login.scss';
 
 import './signup.scss';
 
+import { Preloader } from '../../components';
+
+import { ToasterProvider } from '../../providers/ToasterProvider';
+
 import { useActionCreators, useAppSelector } from '../../store/hooks/hooks';
 
 import { signUpTC } from '../../store/slices/userReducer';
@@ -41,7 +45,7 @@ export const SignUp = () => {
   const onSubmit = async (data: SignUpSchemaType) => {
     await actions.signUpTC(data);
   };
-if(newUser) return <Navigate to="/login" replace />;
+  if (newUser) return <Navigate to="/login" replace />;
   return (
     <div className="main">
       <div className="login">
@@ -95,13 +99,15 @@ if(newUser) return <Navigate to="/login" replace />;
             <button type="button">continue with google</button>
             Have an account?
             <Link to={'/login'}>
-              <button  className="signup" type="button">
+              <button className="signup" type="button">
                 login
               </button>
             </Link>
           </div>
         </form>
       </div>
+      <ToasterProvider />
+      <Preloader />
     </div>
   );
 };

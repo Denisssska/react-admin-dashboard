@@ -6,6 +6,8 @@ import { useEffect } from 'react';
 
 import { useForm } from 'react-hook-form';
 
+import toast from 'react-hot-toast';
+
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 
 import './login.scss';
@@ -17,6 +19,8 @@ import { useActionCreators, useAppSelector } from '../../store/hooks/hooks';
 import { loginTC, userActions } from '../../store/slices/userReducer';
 
 import { signInSchema, SignInSchemaType } from '../../utils';
+import { ToasterProvider } from '../../providers/ToasterProvider';
+import { Preloader } from '../../components';
 //временное решение
 if (!getCookie('session')) {
   localStorage.removeItem('persist:root');
@@ -51,7 +55,14 @@ export const Login = () => {
   });
 
   const onSubmit = async (data: SignInSchemaType) => {
-    await actions.loginTC(data);
+    await actions.loginTC(data).then(e => {
+      console.log(e);
+      if (e.payload !== 'Unauthorized') {
+        toast.success(`Успешно!`);
+      } else {
+        toast.error(`Не вышло!`);
+      }
+    });
   };
   if (user !== null) return <Navigate to="/profile" replace />;
   return (
@@ -92,6 +103,8 @@ export const Login = () => {
           </div>
         </form>
       </div>
+      <ToasterProvider />
+      <Preloader/>
     </div>
   );
 };

@@ -2,14 +2,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { Outlet } from 'react-router-dom';
 
-import { Footer, Menu, Navbar } from './components';
+import { Footer, Menu, Navbar, Preloader } from './components';
 
 import { ToasterProvider } from './providers/ToasterProvider';
 const queryClient = new QueryClient();
 
 const Layout = () => {
   return (
-    <div className="main">
+    <div style={{position:'relative'}}  className="main">
       <Navbar />
       <div className="container">
         <div className="menuContainer">
@@ -23,6 +23,7 @@ const Layout = () => {
       </div>
       <Footer />
       <ToasterProvider />
+      <Preloader />
     </div>
   );
 };

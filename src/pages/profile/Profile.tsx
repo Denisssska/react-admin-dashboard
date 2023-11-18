@@ -1,12 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { useId, useState } from 'react';
+import { useId } from 'react';
 
 import { useForm } from 'react-hook-form';
 
 import './profile.scss';
 
 import toast from 'react-hot-toast';
+
 
 import { typeOfImage } from '../../components/hooks/typeOfImage';
 
@@ -127,7 +128,7 @@ export const Profile = () => {
             )}
           </div>
           <div className="formItem">
-            <label htmlFor={`${id}-username`}>User name</label>
+            <label  htmlFor={`${id}-username`}>User Name</label>
             <input id={`${id}-username`} type="text" placeholder="User name" {...register('username')} />
             {errors[`username`] && (
               <p className="errorMessage" id={`${id}-username`} aria-live="assertive">
@@ -157,13 +158,12 @@ export const Profile = () => {
             </button>
           </div>
           <div className="formItem">
-            <button onClick={()=>alert('Точно удалить?')} className="signup" type="button">
+            <button onClick={() => alert('Точно удалить?')} className="signup" type="button">
               Delete
             </button>
           </div>
         </form>
       </div>
-      <Preloader />
     </div>
   );
 };
