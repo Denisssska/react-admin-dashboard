@@ -4,10 +4,10 @@ export const PORT = import.meta.env.VITE_REACT_APP_API_URL;
 
 export async function customFetch(
   url: string,
-  options: { method?: string; body?: FormData | any; headers?: any }
+  options: { method?: string; body?: FormData | any; headers?: any; credentials?: string }
 ) {
   const defaultHeaders = {
-    Authorization: getCookie('session'),
+    // Authorization: getCookie('session'),
   };
 
   const opts = {
@@ -20,6 +20,7 @@ export async function customFetch(
 
   const loginUrl = '/login'; // url страницы для авторизации
   const tokenData = null; // объявляем локальную переменную tokenData
+  // eslint-disable-next-line no-useless-catch
   try {
     console.log(getCookie('session'));
     if (!getCookie('session')) {

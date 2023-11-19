@@ -28,9 +28,10 @@ export const userApi = {
     // console.log(data.get('profilePhoto'));
 
     // const userId = data.get('_id');
-    return await customFetch( `/user/${data._id}`, {
+    return await customFetch( `/user/update/${data._id}`, {
       method: 'PATCH',
       // body: data,
+      credentials: 'include',
       body: JSON.stringify(data),
       headers: {
         Accept: 'application/json',

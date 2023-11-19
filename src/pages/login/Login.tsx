@@ -12,15 +12,17 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 
 import './login.scss';
 
+import { Preloader } from '../../components';
+
 import { getCookie } from '../../components/hooks/getCookie';
+
+import { ToasterProvider } from '../../providers/ToasterProvider';
 
 import { useActionCreators, useAppSelector } from '../../store/hooks/hooks';
 
 import { loginTC, userActions } from '../../store/slices/userReducer';
 
 import { signInSchema, SignInSchemaType } from '../../utils';
-import { ToasterProvider } from '../../providers/ToasterProvider';
-import { Preloader } from '../../components';
 //временное решение
 if (!getCookie('session')) {
   localStorage.removeItem('persist:root');
@@ -56,7 +58,7 @@ export const Login = () => {
 
   const onSubmit = async (data: SignInSchemaType) => {
     await actions.loginTC(data).then(e => {
-      console.log(e);
+  
       if (e.payload !== 'Unauthorized') {
         toast.success(`Успешно!`);
       } else {
